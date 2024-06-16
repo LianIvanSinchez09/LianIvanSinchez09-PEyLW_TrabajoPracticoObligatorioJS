@@ -1,79 +1,108 @@
-function validar(){
-    //elementos del form
-    //inputs
+function validar() {
+    // Elementos del formulario
     const inputValues = [];
-    let diaNac = document.getElementById("dia");
-    let mesNac = document.getElementById("mes");
-    let anioNac = document.getElementById("anio");
-    //obj fecha
-    let fechaNacimiento = new Date(null, null, null);
-    fechaNacimiento.setDate(diaNac.value)
-    fechaNacimiento.setMonth(mesNac.value)
-    fechaNacimiento.setFullYear(anioNac.value)
-    inputValues.push(document.getElementById("nombre"), document.getElementById("apellido"), document.getElementById("email"), document.getElementById("obras_sociales", diaNac, mesNac, anioNac));
-    console.log(diaNac.value, mesNac.value, anioNac.value);
-    //validacion de fecha de nacimiento
-    const anio = fechaNacimiento.getFullYear();
-    const anioBisiesto = (anio % 4 == 0 && anio % 100 != 0) || (anio % 400 == 0);
-    const fechaNegativa = diaNac.value <= 0 || mesNac.value <= 0 || anioNac.value <= 0
-    const inputFechaCompletado = fechaNacimiento.getDate() && fechaNacimiento.getMonth() && fechaNacimiento.getFullYear();
+    const diaNac = document.getElementById("dia");
+    const mesNac = document.getElementById("mes");
+    const anioNac = document.getElementById("anio");
+    const nombre = document.getElementById("nombre");
+    const apellido = document.getElementById("apellido");
+    const email = document.getElementById("email");
+    const obraSocial = document.getElementById("obras_sociales");
+    inputValues.push(nombre, apellido, email, obraSocial);
+
+    // Validación de fecha de nacimiento
+    const dia = parseInt(diaNac.value, 10);
+    const mes = parseInt(mesNac.value, 10);
+    const anio = parseInt(anioNac.value, 10);
+
+    const fechaActual = new Date();
+    const anioBisiesto = (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
+    const fechaInvalidaGenerica = dia <= 0 || mes <= 0 || anio <= 0 || dia > 31 || mes > 12 || anio > fechaActual.getFullYear();
+    const fechaInvalidaFebrero = (mes === 2 && ((anioBisiesto && dia > 29) || (!anioBisiesto && dia > 28)));
+    const fechaInvalidaAbrilANoviembre = [4, 6, 9, 11].includes(mes) && dia > 30;
+
+    const fechaValida = !fechaInvalidaGenerica && !fechaInvalidaFebrero && !fechaInvalidaAbrilANoviembre;
+
+    console.log(fechaValida && dia && mes && anio);
+
     let punto = 0;
-    if(!fechaNegativa && inputFechaCompletado && fechaNacimiento.getDate() > 1 && fechaNacimiento.getMonth() > 1 && fechaNacimiento.getFullYear() > 1){
-        if([4, 6, 9, 11].includes(fechaNacimiento.getMonth()) && !anioBisiesto && fechaNacimiento.getDate() >= 31){
-            highlightManager("add");
-            punto = 0
-        }
-        else if(fechaNacimiento.getMonth() == 2 && (anioBisiesto && fechaNacimiento.getDate() > 29) 
-        || (fechaNacimiento.getMonth() == 2 && !anioBisiesto && fechaNacimiento.getDate() > 28)){
-            highlightManager("add");
-            punto = 0;
-        }
-        else{
-            highlightManager("remove");
-            punto += 3
-            console.log("un punto");
-        }
-    }else{
-        if(fechaNegativa){
-            highlightManager("add")
-            punto += 0
-        }
+    if (fechaValida && dia >= 1 && mes >= 1 && anio >= 1) {
+        const fechaNacimiento = new Date(anio, mes - 1, dia);
+        console.log(fechaNacimiento);
+        cambiarEstilo("remove");
+        punto += 3;
+    } else {
+        cambiarEstilo("add");
     }
-    let i = 0;
+
     let formNoTerminado = true;
-    while ((i < inputValues.length)) {
-        if(!inputValues[i].value){
-            console.log("if");
+    for (let i = 0; i < inputValues.length; i++) {
+        if (!inputValues[i].value) {
             inputValues[i].classList.add("highlight");
-        }
-        else{
-            console.log("else");
+            console.log(inputValues[i].value);
+        } else if ((inputValues[i].value === email.value) && !(verificarEmail(inputValues[i].value))) {
+            inputValues[i].classList.add("highlight");
+        } else if (inputValues[i].value === nombre.value || inputValues[i].value === apellido.value) {
+            if (!verificarInput(inputValues[i].value)) {
+                inputValues[i].classList.add("highlight");
+            } else {
+                inputValues[i].classList.remove("highlight");
+                punto++;
+                if (punto === 7) {
+                    formNoTerminado = false;
+                }
+            }
+        } else {
             punto++;
             inputValues[i].classList.remove("highlight");
-            if(punto == 7){
-                formNoTerminado = false
+            if (punto === 7) {
+                formNoTerminado = false;
             }
         }
-        i++;
-        if(!formNoTerminado){
-            alert("Enviado")
-        }
+    }
+
+    if (!formNoTerminado) {
+        alert("Enviado");
     }
 
     console.log(punto);
-}   
-
-function highlightManager(instruccion){
-    if(instruccion == "add"){
-        document.getElementById("dia").classList.add("highlight");
-        document.getElementById("mes").classList.add("highlight");
-        document.getElementById("anio").classList.add("highlight");
-    }
-    else{
-        document.getElementById("dia").classList.remove("highlight");
-        document.getElementById("mes").classList.remove("highlight");
-        document.getElementById("anio").classList.remove("highlight");
-    }
 }
 
+function cambiarEstilo(instruccion) {
+    const elementosFecha = ["dia", "mes", "anio"];
+    elementosFecha.forEach(id => {
+        document.getElementById(id).classList[instruccion]("highlight");
+    });
+}
 
+function verificarInput(valor) {
+    let esValido = true;
+    const caracteresPermitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL MNOPQRSTUVWXYZ@gmail";
+    let i = 0;
+    while (i < valor.length && esValido) {
+        if (!caracteresPermitidos.includes(valor[i])) {
+            esValido = false;
+        }
+        i++;
+    }
+    return esValido;
+}
+
+function verificarEmail(email) {
+    let esValido = false;
+    let i = 0;
+    const caracteresPermitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@.";
+    while(i < email.length){
+        if (!caracteresPermitidos.includes(email[i])) {
+                esValido = true;
+        }
+        i++;
+    }
+    if (email.includes(" ") || !email.includes("@")) {
+        esValido = false;
+    }
+    else if( email.includes("@hotmail") || email.includes("@gmail")){
+        esValido = true;
+    }
+    return esValido;
+}
