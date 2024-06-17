@@ -11,9 +11,9 @@ function validar() {
     inputValues.push(nombre, apellido, email, obraSocial);
 
     // Validación de fecha de nacimiento
-    const dia = parseInt(diaNac.value, 10);
-    const mes = parseInt(mesNac.value, 10);
-    const anio = parseInt(anioNac.value, 10);
+    const dia = parseInt(diaNac.value);
+    const mes = parseInt(mesNac.value);
+    const anio = parseInt(anioNac.value);
 
     const fechaActual = new Date();
     const anioBisiesto = (anio % 4 === 0 && anio % 100 !== 0) || (anio % 400 === 0);
@@ -27,8 +27,6 @@ function validar() {
 
     let punto = 0;
     if (fechaValida && dia >= 1 && mes >= 1 && anio >= 1) {
-        const fechaNacimiento = new Date(anio, mes - 1, dia);
-        console.log(fechaNacimiento);
         cambiarEstilo("remove");
         punto += 3;
     } else {
@@ -69,11 +67,16 @@ function validar() {
 }
 
 function cambiarEstilo(instruccion) {
-    const elementosFecha = ["dia", "mes", "anio"];
-    elementosFecha.forEach(id => {
-        document.getElementById(id).classList[instruccion]("highlight");
-    });
-}
+    if (instruccion == "add") {
+    document.getElementById("dia").classList.add("highlight");
+    document.getElementById("mes").classList.add("highlight");
+    document.getElementById("anio").classList.add("highlight");
+    } else {
+    document.getElementById("dia").classList.remove("highlight");
+    document.getElementById("mes").classList.remove("highlight");
+    document.getElementById("anio").classList.remove("highlight");
+    }
+    }
 
 function verificarInput(valor) {
     let esValido = true;
@@ -106,3 +109,4 @@ function verificarEmail(email) {
     }
     return esValido;
 }
+
