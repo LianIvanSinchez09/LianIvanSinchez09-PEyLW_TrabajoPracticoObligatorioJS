@@ -23,8 +23,6 @@ function validar() {
 
     const fechaValida = !fechaInvalidaGenerica && !fechaInvalidaFebrero && !fechaInvalidaAbrilANoviembre;
 
-    console.log(fechaValida && dia && mes && anio);
-
     let punto = 0;
     if (fechaValida && dia >= 1 && mes >= 1 && anio >= 1) {
         cambiarEstilo("remove");
@@ -37,7 +35,6 @@ function validar() {
     for (let i = 0; i < inputValues.length; i++) {
         if (!inputValues[i].value) {
             inputValues[i].classList.add("highlight");
-            console.log(inputValues[i].value);
         } else if ((inputValues[i].value === email.value) && !(verificarEmail(inputValues[i].value))) {
             inputValues[i].classList.add("highlight");
         } else if (inputValues[i].value === nombre.value || inputValues[i].value === apellido.value) {
@@ -62,8 +59,6 @@ function validar() {
     if (!formNoTerminado) {
         alert("Enviado");
     }
-
-    console.log(punto);
 }
 
 function cambiarEstilo(instruccion) {
@@ -80,7 +75,7 @@ function cambiarEstilo(instruccion) {
 
 function verificarInput(valor) {
     let esValido = true;
-    const caracteresPermitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL MNOPQRSTUVWXYZ@gmail";
+    const caracteresPermitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL MNOPQRSTUVWXYZ";
     let i = 0;
     while (i < valor.length && esValido) {
         if (!caracteresPermitidos.includes(valor[i])) {
