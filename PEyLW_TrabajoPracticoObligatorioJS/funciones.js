@@ -71,7 +71,7 @@ function cambiarEstilo(instruccion) {
     document.getElementById("mes").classList.remove("highlight");
     document.getElementById("anio").classList.remove("highlight");
     }
-    }
+}
 
 function verificarInput(valor) {
     let esValido = true;
@@ -87,20 +87,33 @@ function verificarInput(valor) {
 }
 
 function verificarEmail(email) {
-    let esValido = false;
+    let esValido = true;
     let i = 0;
+    let encontrado1 = false;
+    let encontrado2 = false;
+    let c = 0;
     const caracteresPermitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@.";
-    while(i < email.length){
+    const caracteresNoPermitidos = "&/'¿?%-&#!#+´´|";
+    while(i < email.length && !encontrado1){
         if (!caracteresPermitidos.includes(email[i])) {
-                esValido = true;
+                esValido = false;
+                encontrado1 = true;
         }
         i++;
     }
-    if (email.includes(" ") || !email.includes("@")) {
-        esValido = false;
+    while(c < email.length && !encontrado2){
+        if (caracteresNoPermitidos.includes(email[c])) {
+                esValido = false;
+                encontrado2 = true;
+        }
+        c++;
     }
-    else if( email.includes("@hotmail") || email.includes("@gmail")){
-        esValido = true;
+    if(esValido){
+        if(email.includes("@hotmail") || email.includes("@gmail")){
+            esValido = true;
+        }
+    }else if(email.includes(" ") || email.includes("|") || !email.includes("@")) {
+        esValido = false;
     }
     return esValido;
 }
